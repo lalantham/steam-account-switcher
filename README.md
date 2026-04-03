@@ -7,7 +7,7 @@ A lightweight Bash script that lets you switch between multiple Steam accounts i
 ![rofi](https://img.shields.io/badge/launcher-rofi-orange?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)
 
-![Test Image 1](https://github.com/lalantham/steam-account-switcher/blob/main/screenshot.png)
+![Image 1](https://github.com/lalantham/steam-account-switcher/blob/main/screenshot.png)
 
 ---
 
