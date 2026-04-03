@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Steam Account Switcher
+Comment=Switch Steam Accounts with a rofi menu
+Exec=/home/lalantha/Documents/Tools/Scripts/steam-accounts.sh
+Icon=steam
+Terminal=false
+Type=Application
+Categories=Game;

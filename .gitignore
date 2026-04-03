@@ -1,0 +1,9 @@
+# Don't accidentally commit personal alias mappings if you fork this
+# (comment out the line below if you want to track your aliases.conf)
+# aliases.conf
+
+# OS / editor noise
+.DS_Store
+*.swp
+*~
+.vscode/
