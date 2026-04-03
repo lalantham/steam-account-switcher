@@ -55,7 +55,7 @@ If you prefer to set things up yourself:
 
 **1. Clone the repo**
 ```bash
-git clone https://github.com/YOUR_USERNAME/steam-account-switcher.git
+git https://github.com/lalantham/steam-account-switcher.git
 ```
 
 **2. Install rofi** (if not already installed)
