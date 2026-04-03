@@ -35,7 +35,7 @@ A lightweight Bash script that lets you switch between multiple Steam accounts i
 ## 🚀 Quick Install (Automated)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/steam-account-switcher.git
+git clone https://github.com/lalantham/steam-account-switcher.git
 cd steam-account-switcher
 chmod +x install.sh
 ./install.sh
