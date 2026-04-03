@@ -125,7 +125,6 @@ if [[ -n "$idx" ]]; then
 fi
 [ -z "$ACCOUNT" ] && exit 1
 # Hand off the Steam restart to a detached child process
-# so killing Steam cannot terminate THIS script's process group
 (
     # Use pkill with exact match to avoid killing unrelated processes
     pkill -x steam 2>/dev/null
