@@ -96,23 +96,49 @@ cp "$SCRIPT_DIR/steam_switcher.py" "$INSTALL_DIR/steam_switcher.py"
 chmod +x "$INSTALL_DIR/steam_switcher.py"
 echo "  ✔ Application installed"
 
-# ── 4. aliases.conf ────────────────────────────────────────────────────────────
+# ── 4. aliases.conf + app config ──────────────────────────────────────────────
 echo ""
 echo "  [4/5] Setting up aliases.conf ..."
 
+LEGACY_ALIAS="$HOME/Documents/Tools/Scripts/aliases.conf"
+FINAL_ALIAS_PATH=""
+
 if [[ -f "$ALIAS_FILE" ]]; then
-    echo "  ℹ  Existing aliases.conf preserved (your labels are safe)"
+    # Already at the standard location — leave it alone
+    FINAL_ALIAS_PATH="$ALIAS_FILE"
+    echo "  ℹ  Existing aliases.conf preserved at $ALIAS_FILE"
+elif [[ -f "$LEGACY_ALIAS" ]]; then
+    # User has the bash-version aliases — point the app at that file, no copy
+    FINAL_ALIAS_PATH="$LEGACY_ALIAS"
+    echo "  ℹ  Found existing aliases at $LEGACY_ALIAS"
+    echo "     App will use that file directly (no duplicate created)"
 else
-    # Check if the user already has one from the bash-version installer
-    LEGACY_ALIAS="$HOME/Documents/Tools/Scripts/aliases.conf"
-    if [[ -f "$LEGACY_ALIAS" ]]; then
-        cp "$LEGACY_ALIAS" "$ALIAS_FILE"
-        echo "  ✔ Copied existing aliases from $LEGACY_ALIAS"
-    else
-        cp "$REPO_DIR/aliases.conf" "$ALIAS_FILE"
-        echo "  ✔ Template aliases.conf installed"
-    fi
+    # Fresh install — drop a template at the standard location
+    cp "$REPO_DIR/aliases.conf" "$ALIAS_FILE"
+    FINAL_ALIAS_PATH="$ALIAS_FILE"
+    echo "  ✔ Template aliases.conf created at $ALIAS_FILE"
 fi
+
+# Write config.json so the app knows exactly where to find aliases
+# (avoids relying on hard-coded Python defaults)
+VDF_PATH=""
+for candidate in "$HOME/.steam/root/config/loginusers.vdf" \
+                 "$HOME/.local/share/Steam/config/loginusers.vdf"; do
+    if [[ -f "$candidate" ]]; then
+        VDF_PATH="$candidate"
+        break
+    fi
+done
+VDF_PATH="${VDF_PATH:-$HOME/.steam/root/config/loginusers.vdf}"
+
+mkdir -p "$HOME/.config/steam-account-switcher"
+cat > "$HOME/.config/steam-account-switcher/config.json" <<EOF
+{
+  "vdf_path": "$VDF_PATH",
+  "alias_file": "$FINAL_ALIAS_PATH"
+}
+EOF
+echo "  ✔ App config written → alias_file: $FINAL_ALIAS_PATH"
 
 # ── 5. Desktop integration ─────────────────────────────────────────────────────
 echo ""

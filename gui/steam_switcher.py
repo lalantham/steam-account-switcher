@@ -50,7 +50,7 @@ VDF_CANDIDATES = [
     Path.home() / ".steam/root/config/loginusers.vdf",
     Path.home() / ".local/share/Steam/config/loginusers.vdf",
 ]
-DEFAULT_ALIAS_FILE = Path.home() / "Documents/Tools/Scripts/aliases.conf"
+DEFAULT_ALIAS_FILE = Path.home() / ".local/share/steam-account-switcher/aliases.conf"
 
 ROLE_ACCOUNT = Qt.ItemDataRole.UserRole
 ROLE_ACCOUNT_NAME = Qt.ItemDataRole.UserRole + 1
