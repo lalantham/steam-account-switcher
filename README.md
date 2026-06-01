@@ -1,24 +1,28 @@
 # 🎮 Steam Account Switcher
 
-A lightweight Bash script that lets you switch between multiple Steam accounts instantly using a sleek **rofi** popup menu — no manual logout, no browser, no fuss.
+Switch between multiple Steam accounts instantly — no manual logout, no browser, no fuss.
+Available as a **desktop GUI** (PyQt6) and a lightweight **CLI popup** (Bash + rofi).
 
 ![Linux](https://img.shields.io/badge/platform-Linux-blue?style=flat-square&logo=linux)
-![Bash](https://img.shields.io/badge/shell-bash-green?style=flat-square&logo=gnubash)
-![rofi](https://img.shields.io/badge/launcher-rofi-orange?style=flat-square)
+![Python](https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square&logo=python)
+![PyQt6](https://img.shields.io/badge/GUI-PyQt6-green?style=flat-square)
+![Bash](https://img.shields.io/badge/CLI-bash%20%2B%20rofi-orange?style=flat-square&logo=gnubash)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)
 
-![Image 1](https://github.com/lalantham/steam-account-switcher/blob/main/screenshot.png)
+![screenshot](screenshot.png)
 
 ---
 
 ## ✨ Features
 
-- **Instant account switching** — closes Steam and relaunches with the selected account
-- **Rofi-powered menu** — fast, keyboard-navigable, type-to-filter
-- **Custom display labels** — map cryptic Steam usernames to friendly names with emoji support
-- **Auto-detached launch** — Steam restarts cleanly without leaving zombie processes
-- **Self-bootstrapping** — creates a template `aliases.conf` on first run if one doesn't exist
-- **Desktop entry** — launch from your app menu or bind to a keyboard shortcut
+- **One-click account switching** — select an account and Steam restarts into it automatically
+- **Friendly display names** — map cryptic Steam usernames to custom labels with full emoji support
+- **Most-recently-used badge** — always know which account was last active
+- **System tray integration** — minimises to the tray, always one click away
+- **Live Steam status** — header shows whether Steam is running or stopped
+- **Inline alias editor** — add, rename, or remove account labels without touching a config file
+- **Auto-detects Steam** — finds `loginusers.vdf` automatically on all standard install paths
+- **Clean process management** — waits for Steam to fully exit before relaunching (no zombie processes)
 
 ---
 
@@ -26,73 +30,73 @@ A lightweight Bash script that lets you switch between multiple Steam accounts i
 
 | Dependency | Purpose |
 |---|---|
-| `bash` ≥ 4.0 | Script runtime (associative arrays) |
-| [`rofi`](https://github.com/davatorium/rofi) | Account picker menu |
-| `steam` | Obviously |
+| Python ≥ 3.8 | GUI runtime |
+| PyQt6 ≥ 6.4 | Desktop GUI framework |
+| Steam | Obviously |
 
-> **Note:** This script is Linux-only. It reads Steam's `loginusers.vdf` file and uses `pkill`/`pgrep` for process management.
+> The installer handles PyQt6 automatically. Python 3.8+ ships with virtually every modern Linux distro.
 
 ---
 
-## 🚀 Quick Install (Automated)
+## 🚀 Quick Install
 
 ```bash
 git clone https://github.com/lalantham/steam-account-switcher.git
-cd steam-account-switcher
+cd steam-account-switcher/gui
 chmod +x install.sh
 ./install.sh
 ```
 
 The installer will:
-1. Check for `rofi` and offer to install it if missing
-2. Copy the script to `~/Documents/Tools/Scripts/`
-3. Install `aliases.conf` (skips if one already exists)
-4. Register the `.desktop` entry so it appears in your app launcher
+1. Verify Python 3.8+
+2. Install PyQt6 via your system package manager (or pip as fallback)
+3. Copy the app to `~/.local/share/steam-account-switcher/`
+4. Create a `steam-account-switcher` command in `~/.local/bin/`
+5. Register a `.desktop` entry so it appears in your app launcher
 
 ---
 
-## 🔧 Manual Setup
+## 🖥️ Running the App
 
-If you prefer to set things up yourself:
+**From your app launcher** (KDE, GNOME, etc.)
+Search for **"Steam Account Switcher"** — the icon appears after install.
 
-**1. Clone the repo**
+**From the terminal**
 ```bash
-git https://github.com/lalantham/steam-account-switcher.git
+steam-account-switcher
 ```
 
-**2. Install rofi** (if not already installed)
+**Directly (without install)**
 ```bash
-# Debian / Ubuntu / Mint
-sudo apt install rofi
-
-# Arch / Manjaro
-sudo pacman -S rofi
-
-# Fedora
-sudo dnf install rofi
+python3 gui/steam_switcher.py
 ```
 
-**3. Make the script executable**
+---
+
+## 🔧 Manual Install (without the script)
+
 ```bash
-chmod +x steam-accounts.sh
-```
+# 1. Install PyQt6
+sudo pacman -S python-pyqt6          # Arch / CachyOS / Manjaro
+sudo apt install python3-pyqt6       # Debian / Ubuntu / Mint
+sudo dnf install python3-qt6         # Fedora
+pip3 install --user PyQt6            # Any distro (pip fallback)
 
-**4. Place the files somewhere permanent**, e.g.:
-```
-~/Documents/Tools/Scripts/
-├── steam-accounts.sh
-└── aliases.conf
-```
+# 2. Copy the app somewhere permanent
+mkdir -p ~/.local/share/steam-account-switcher
+cp gui/steam_switcher.py ~/.local/share/steam-account-switcher/
 
-**5. (Optional) Add a desktop entry**
+# 3. Create a launcher
+mkdir -p ~/.local/bin
+cat > ~/.local/bin/steam-account-switcher <<'EOF'
+#!/bin/bash
+exec python3 "$HOME/.local/share/steam-account-switcher/steam_switcher.py" "$@"
+EOF
+chmod +x ~/.local/bin/steam-account-switcher
 
-Edit `steam-account-switcher.desktop` and update the `Exec=` line to point to where you placed the script:
-```ini
-Exec=/home/YOUR_USERNAME/Documents/Tools/Scripts/steam-accounts.sh
-```
-Then copy it to your local applications folder:
-```bash
-cp steam-account-switcher.desktop ~/.local/share/applications/
+# 4. Register the desktop entry
+cp gui/steam-account-switcher-gui.desktop ~/.local/share/applications/steam-account-switcher.desktop
+# Edit the Exec= line to match your install path, then:
 update-desktop-database ~/.local/share/applications/
 ```
 
@@ -100,64 +104,53 @@ update-desktop-database ~/.local/share/applications/
 
 ## ⚙️ Configuration — `aliases.conf`
 
-The `aliases.conf` file maps your Steam **PersonaName** (the internal username shown in `loginusers.vdf`) to a friendly label displayed in the menu.
+The app reads `aliases.conf` to display friendly names instead of raw Steam PersonaNames.
 
-```
+**Default location:** `~/.local/share/steam-account-switcher/aliases.conf`
+
+### Format
+
+```ini
 # Steam Account Aliases
 # Format: PersonaName=Friendly Label
 
 MickyBro=🎮 Main Account
 john_alt99=👾 Horror Games
-randomname123=🏆 Competitive
+randomname123=🏆 Competitive Smurf
 ```
 
-- Lines starting with `#` are comments and are ignored
-- The key (left side) must exactly match the `PersonaName` from Steam's login file
-- The value (right side) is whatever you want displayed in the menu — emoji are supported
-- If a `PersonaName` has no alias entry, it is shown as-is in the menu
+- Keys are **case-sensitive** and must exactly match the `PersonaName` in Steam's login file
+- Values support any Unicode text including emoji
+- Lines starting with `#` are ignored
+- Accounts without an entry are displayed using their raw PersonaName
 
-### Finding your PersonaName
+### Finding your PersonaNames
 
-Run this to list all accounts Steam knows about:
 ```bash
 grep '"PersonaName"' ~/.steam/root/config/loginusers.vdf | awk -F\" '{print $4}'
 ```
 
----
+### Editing aliases in-app
 
-## 🖥️ Usage
-
-### From the terminal
-```bash
-./steam-accounts.sh
-```
-
-### From the app launcher
-Search for **"Steam Account Switcher"** in your application menu (requires the `.desktop` entry to be installed).
-
-### Keyboard shortcut
-Bind the script path to a shortcut in your desktop environment's keyboard settings:
-- **KDE**: System Settings → Shortcuts → Custom Shortcuts
-- **GNOME**: Settings → Keyboard → Custom Shortcuts
-- **i3/Hyprland/Sway**: Add a `bindsym` line in your config pointing to the script
-
-### Workflow
-1. Launch the switcher — a rofi popup appears
-2. Type to filter or use arrow keys to navigate
-3. Press Enter on the account you want
-4. Steam closes and relaunches, auto-logging into the selected account
-5. Press Escape or select **❌ Exit** to cancel without switching
+Open the app → click **✏ Manage Aliases** — no need to touch the file manually.
 
 ---
 
-## 📁 File Structure
+## 🗂️ File Structure
 
 ```
 steam-account-switcher/
-├── steam-accounts.sh              # Main switcher script
-├── aliases.conf                   # Your account display labels
-├── steam-account-switcher.desktop # Desktop/app launcher entry
-├── install.sh                     # Automated installer
+│
+├── gui/                              # PyQt6 Desktop GUI
+│   ├── steam_switcher.py             #   Main application
+│   ├── install.sh                    #   Installer
+│   ├── uninstall.sh                  #   Uninstaller
+│   └── requirements.txt             #   Python dependencies
+│
+├── steam-accounts.sh                 # CLI version (Bash + rofi)
+├── aliases.conf                      # Account display labels (template)
+├── steam-account-switcher.desktop    # Desktop entry for CLI version
+├── install.sh                        # CLI version installer
 └── README.md
 ```
 
@@ -165,19 +158,58 @@ steam-account-switcher/
 
 ## 🛠️ Troubleshooting
 
-**Menu doesn't appear**
-- Confirm rofi is installed: `which rofi`
-- Try running the script from a terminal to see any error output
+**"No accounts found" in the app**
+- Verify the file exists: `ls ~/.steam/root/config/loginusers.vdf`
+- Some distros use `~/.local/share/Steam/config/loginusers.vdf` — update the path in **⚙ Settings**
+- Make sure you have logged into each account at least once with "Remember me" checked
 
-**Accounts not showing up**
-- Verify the login file exists: `ls ~/.steam/root/config/loginusers.vdf`
-- Some distros place it at `~/.local/share/Steam/config/loginusers.vdf` — update `LOGIN_FILE` in the script if needed
+**App launches but Steam doesn't switch**
+- Ensure Steam is fully closed before switching — or let the app kill it (it does this automatically)
+- Run from the terminal to see any error output: `steam-account-switcher`
 
-**Steam doesn't switch accounts / relaunches into the same account**
-- Make sure you've logged in to each account at least once with the "remember me" option so Steam saves them to `loginusers.vdf`
+**`steam-account-switcher` command not found after install**
+- Add `~/.local/bin` to your PATH:
+  ```bash
+  echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc   # zsh
+  echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc  # bash
+  ```
+  Then restart your shell or run `source ~/.zshrc`.
 
 **Wrong PersonaName in aliases.conf**
-- PersonaNames are case-sensitive. Run the grep command above to get the exact strings
+- PersonaNames are case-sensitive. Run the grep command above to get exact strings.
+- Or use **✏ Manage Aliases** in the app — it pre-populates all known PersonaNames automatically.
+
+**PyQt6 import error**
+- Re-run the installer, or install manually:
+  ```bash
+  sudo pacman -S python-pyqt6   # Arch-based
+  pip3 install --user PyQt6      # Any distro
+  ```
+
+---
+
+## 🗑️ Uninstall
+
+```bash
+chmod +x gui/uninstall.sh
+./gui/uninstall.sh
+```
+
+The uninstaller removes the app, launcher, and desktop entry. It offers to keep or back up your `aliases.conf`.
+
+---
+
+## CLI Version (Bash + Rofi)
+
+A minimal alternative that uses a [rofi](https://github.com/davatorium/rofi) popup instead of a full window.
+
+**Install:**
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+**Requirements:** `bash ≥ 4.0`, `rofi`, `steam`
 
 ---
 

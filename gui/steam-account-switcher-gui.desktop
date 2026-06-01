@@ -1,0 +1,18 @@
+[Desktop Entry]
+Categories=Game;
+Comment[en_US]=Switch Steam Accounts — PyQt6 GUI
+Comment=Switch Steam Accounts — PyQt6 GUI
+Exec=python3 /home/lalantha/Documents/Tools/Scripts/steam_switcher.py
+GenericName[en_US]=
+GenericName=
+Icon=steam
+MimeType=
+Name[en_US]=Steam Account Switcher
+Name=Steam Account Switcher
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
