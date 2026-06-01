@@ -9,6 +9,7 @@ Available as a **desktop GUI** (PyQt6) and a lightweight **CLI popup** (Bash + r
 ![Bash](https://img.shields.io/badge/CLI-bash%20%2B%20rofi-orange?style=flat-square&logo=gnubash)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)
 
+![screenshot](GUI.png)
 ![screenshot](screenshot.png)
 
 ---
